@@ -183,7 +183,7 @@ const Change = () => {
                 </div>
 
 
-                <div className="w-full grid grid-cols-3 gap-[20px] mt-[40px] max-w-[500px] px-[20px]">
+                <div className="w-full grid grid-cols-3 gap-[20px] mt-[20px] max-w-[500px] px-[20px]">
                     {products.map((item: any) => {
                         return (
                             <Dropdown>
@@ -248,7 +248,9 @@ const Change = () => {
 
                             <ModalBody>
 
-                                <Input type="text"
+                                <Input 
+                                    
+                                type="text"
                                     value={pname}
                                     onChange={(e) => {
                                         setPname(e.target.value)

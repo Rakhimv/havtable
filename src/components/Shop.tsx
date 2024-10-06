@@ -58,7 +58,9 @@ const Shop = () => {
         let it = 0
         if (tovars.length > 0) {
             for (let item of tovars) {
-                it = it + item.price
+                if (!item.name.includes('dop')) {
+                    it = it + item.price
+                }
             }
         }
         setItogo(it)
@@ -148,77 +150,174 @@ const Shop = () => {
                     <div className="w-full border-1 p-[20px] py-[10px] rounded-lg flex justify-center border-white">
                         Итого: <span className="text-green-500 ml-2 font-bold font-mono">
                             {itogo} ₽
-                        </span> 
+                        </span>
                     </div>
                 </div>
 
 
-                <div className="w-full flex flex-col gap-[10px] mt-[40px] max-w-[500px] px-[20px]">
+                <div className="w-full flex flex-col gap-[10px] mt-[20px] max-w-[500px] px-[20px]">
                     {tovars.map((item: any) => {
                         return (
 
+                            !item.name.includes('dop') ?
 
 
 
+                                <Dropdown>
+                                    <DropdownTrigger>
 
-                            <Dropdown>
-                                <DropdownTrigger>
+                                        <Card shadow="sm" isPressable key={item.id} className="flex flex-row items-center p-[10px] w-full py-[0px]" >
 
-                                    <Card shadow="sm" isPressable key={item.id} className="flex flex-row items-center p-[10px] w-full py-[0px]" >
+                                            <Image
+                                                shadow="sm"
+                                                radius="lg"
+                                                alt={item.name}
+                                                className="object-cover w-[50px] h-[50px]"
+                                                src={item.img}
+                                            />
 
-                                        <Image
-                                            shadow="sm"
-                                            radius="lg"
-                                            alt={item.name}
-                                            className="object-cover w-[50px] h-[50px]"
-                                            src={item.img}
-                                        />
-
-                                        <CardFooter className="w-full flex justify-between items-center">
-                                            <div className="flex flex-col items-start">
-                                                <b className="truncate whitespace-nowrap overflow-hidden max-w-xs">{item.name}</b>
-                                                <p className="textprange text-default-500">{item.price} ₽</p>
-                                            </div>
+                                            <CardFooter className="w-full flex justify-between items-center">
+                                                <div className="flex flex-col items-start">
+                                                    <b className="truncate whitespace-nowrap overflow-hidden max-w-xs">{item.name}</b>
+                                                    <p className="textprange text-default-500">{item.price} ₽</p>
+                                                </div>
 
 
-                                        </CardFooter>
-                                    </Card>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    aria-label="Action event example"
-                                    onAction={(key) => {
-                                        if (key == 'delete') {
-                                            let prs = localStorage.getItem('tovars') || "[]"
-                                            let data = JSON.parse(prs)
-                                            prs = data.filter((product: any) => product.id !== item.id);
+                                            </CardFooter>
+                                        </Card>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Action event example"
+                                        onAction={(key) => {
+                                            if (key == 'delete') {
+                                                let prs = localStorage.getItem('tovars') || "[]"
+                                                let data = JSON.parse(prs)
+                                                prs = data.filter((product: any) => product.id !== item.id);
 
-                                            localStorage.setItem('tovars', JSON.stringify(prs));
-                                            updateTovars();
+                                                localStorage.setItem('tovars', JSON.stringify(prs));
+                                                updateTovars();
+                                            }
+
+
+                                            if (key == 'edit') {
+                                                editable(item)
+                                                setPid(item.id)
+                                            }
+
+                                            if (key == 'dop') {
+                                                let tovars = JSON.parse(localStorage.getItem('tovars') || "[]")
+
+                                                let data = {
+                                                    id: item.id,
+                                                    name: item.name + ' dop',
+                                                    price: parseFloat(item.price),
+                                                    img: item.img
+                                                }
+
+
+                                                tovars = tovars.map((product: Tovars) => product.id === item.id ? data : product)
+                                                localStorage.setItem('tovars', JSON.stringify(tovars))
+                                                updateTovars()
+                                            }
                                         }
-
-
-                                        if (key == 'edit') {
-                                            editable(item)
-                                            setPid(item.id)
                                         }
-                                    }
-                                    }
-                                >
-                                    <DropdownItem key="edit">Изменить</DropdownItem>
-                                    <DropdownItem key="delete"  >
-                                        <p className="text-red-400">Удалить продукт</p>
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
+                                    >
+                                        <DropdownItem key="dop">Уже есть</DropdownItem>
+                                        <DropdownItem key="edit">Изменить</DropdownItem>
+                                        <DropdownItem key="delete"  >
+                                            <p className="text-red-400">Удалить продукт</p>
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown> : null
                         )
                     })}
                 </div>
+
+
+                <div className="w-full flex flex-col gap-[10px] mb-[40px] mt-[40px] max-w-[500px] px-[20px]">
+                    <p className="text-[20px] text-center">Дополнительно</p>
+                    {tovars.map((item: any) => {
+
+
+                        return (
+                            item.name.includes('dop') ?
+                                <Dropdown>
+                                    <DropdownTrigger>
+
+                                        <Card shadow="sm" isPressable key={item.id} className="flex flex-row items-center p-[10px] w-full py-[0px]" >
+
+                                            <Image
+                                                shadow="sm"
+                                                radius="lg"
+                                                alt={item.name}
+                                                className="object-cover w-[50px] h-[50px]"
+                                                src={item.img}
+                                            />
+
+                                            <CardFooter className="w-full flex justify-between items-center">
+                                                <div className="flex flex-col items-start">
+                                                    <b className="truncate whitespace-nowrap overflow-hidden max-w-xs">{item.name}</b>
+                                                    <p className="textprange text-default-500">{item.price} ₽</p>
+                                                </div>
+
+
+                                            </CardFooter>
+                                        </Card>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Action event example"
+                                        onAction={(key) => {
+                                            if (key == 'delete') {
+                                                let prs = localStorage.getItem('tovars') || "[]"
+                                                let data = JSON.parse(prs)
+                                                prs = data.filter((product: any) => product.id !== item.id);
+
+                                                localStorage.setItem('tovars', JSON.stringify(prs));
+                                                updateTovars();
+                                            }
+
+
+                                            if (key == 'edit') {
+                                                editable(item)
+                                                setPid(item.id)
+                                            }
+
+                                            if (key == 'dop') {
+                                                let tovars = JSON.parse(localStorage.getItem('tovars') || "[]")
+
+                                                let data = {
+                                                    id: item.id,
+                                                    name: item.name.replace('dop', ''),
+                                                    price: parseFloat(item.price),
+                                                    img: item.img
+                                                }
+
+
+                                                tovars = tovars.map((product: Tovars) => product.id === item.id ? data : product)
+                                                localStorage.setItem('tovars', JSON.stringify(tovars))
+                                                updateTovars()
+                                            }
+                                        }
+                                        }
+                                    >
+                                        <DropdownItem key="dop">Закончилось</DropdownItem>
+                                        <DropdownItem key="edit">Изменить</DropdownItem>
+                                        <DropdownItem key="delete"  >
+                                            <p className="text-red-400">Удалить продукт</p>
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                                : null
+                        )
+                    })}
+                </div>
+
 
             </div>
 
 
 
-            <Modal  placement="center" backdrop="blur"  isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal placement="center" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>

@@ -80,7 +80,7 @@ const Index = () => {
                         </Button>
                     </Link>
                 </div>
-                <div className="w-full flex flex-col gap-[20px] mt-[20px] items-center">
+                <div className="w-full flex flex-col gap-[20px] mt-[20px] mb-[40px] items-center">
                     {days.map((day) => {
 
                         return (
@@ -90,7 +90,7 @@ const Index = () => {
                                 </div>
                                 {
                                     havtable.length !== 0 && havtable[day.id].length > 0 ?
-                                        <div className="w-full flex flex-col gap-[10px]">
+                                        <div className="w-full flex flex-col mt-[-10px] gap-[10px]">
                                             {havtable[day.id].map((product: Product) => {
                                                 return (
                                                     <div key={product.id}>

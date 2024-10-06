@@ -170,11 +170,11 @@ const Settings = () => {
 
                         <ModalBody>
 
-                            <div className="w-full flex flex-col gap-[10px] mb-[30px]">
+                            <div className="w-full flex flex-col max-h-[400px] overflow-y-scroll gap-[10px] mb-[30px]">
                                 {products.map((item: any) => {
                                     return (
 
-                                        <Card shadow="sm" key={item.id} isPressable className="flex border-white border-1 flex-row items-center p-[10px] py-[0px]" onPress={() => {
+                                        <Card shadow="sm" key={item.id} isPressable className="flex min-h-[70px] border-white border-1 flex-row items-center p-[10px] py-[0px]" onPress={() => {
                                             addProduct(item)
                                         }}>
 

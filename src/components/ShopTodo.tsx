@@ -1,0 +1,267 @@
+import { Card, CardFooter, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react"
+import { IoMdAdd } from "react-icons/io";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input } from "@nextui-org/react";
+import { useState } from "react";
+
+
+
+export type Tovars = {
+    id: number
+    name: string;
+    img: string;
+    price: number;
+}
+
+
+const ShopTodo = () => {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [tovars, setTovars] = useState<Tovars[]>([]);
+    const [ujest, setUjest] = useState<boolean>(false);
+    const [pid, setPid] = useState<number>(0);
+    const [itogo, setItogo] = useState<number>(0);
+
+    const [pname, setPname] = useState<string>('')
+    const [price, setPrice] = useState<string>('')
+
+    function updateTovars() {
+        let tovars = localStorage.getItem('todos') || '[]';
+        setTovars(JSON.parse(tovars))
+        setItogo(0)
+
+    }
+
+    function validate(str: string) {
+        if (str.trim().length > 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    useEffect(() => {
+        if (!isOpen) {
+            setPname('')
+            setPrice('')
+            setUjest(false)
+            setPid(0)
+        }
+    }, [isOpen])
+
+
+    useEffect(() => {
+        setItogo(tovars.length)
+    }, [tovars])
+
+
+
+    function subitItem() {
+        if (validate(pname) && validate(price)) {
+
+
+            let tovars = JSON.parse(localStorage.getItem('todos') || "[]")
+
+            let data = {
+                id: ujest ? pid : tovars.length + 1,
+                name: pname,
+                price: parseFloat(price),
+            }
+
+            if (ujest) {
+                tovars = tovars.map((product: Tovars) => product.id === pid ? data : product)
+            } else {
+                tovars.push(data)
+            }
+
+
+            console.log(data);
+            localStorage.setItem('todos', JSON.stringify(tovars))
+            onOpenChange()
+            updateTovars()
+
+            setPname('')
+            setPrice('')
+            setUjest(false)
+            setPid(0)
+        }
+    }
+
+
+
+    useEffect(() => {
+        updateTovars()
+    }, [])
+
+
+    function editable(item: Tovars) {
+        setUjest(true)
+        setPid(item.id)
+        setPname(item.name)
+        setPrice(String(item.price))
+        onOpen()
+
+    }
+
+
+
+
+
+
+    return (
+
+        <>
+            <div className="w-full flex flex-col items-center pb-[50px]">
+
+
+                <div className="max-w-[500px] px-[20px] w-full mt-[40px] flex gap-[10px]">
+                    <Link to={'/todo'}>
+                        <Button isIconOnly variant="bordered" color="primary">
+                            <IoMdArrowRoundBack size={20} />
+                        </Button>
+                    </Link>
+
+                    <Button
+
+                        onClick={() => {
+                            onOpen()
+                        }}
+                        className="w-full py-[10px]" color="primary" endContent={<IoMdAdd className="pt-[5px] stb" size={25} />}>
+                        <p className="text-[17px] text-black">Добавить</p>
+                    </Button>
+                </div>
+
+                <div className="max-w-[500px]  px-[20px] w-full mt-[20px] flex justify-center">
+                    <div className="w-full border-1 p-[20px] py-[10px] rounded-lg flex justify-center border-white">
+                        Итого: <span className="text-green-500 ml-2 font-bold font-mono">
+                            {itogo}
+                        </span>
+                    </div>
+                </div>
+
+
+                <div className="w-full flex flex-col gap-[10px] mt-[20px] max-w-[500px] px-[20px]">
+                    {tovars.map((item: any) => {
+                        return (
+
+                            !item.name.includes('dop') ?
+
+
+
+                                <Dropdown>
+                                    <DropdownTrigger>
+
+                                        <Card shadow="sm" isPressable key={item.id} className="flex flex-row items-center p-[10px] w-full py-[0px]" >
+
+                                         
+                                            <CardFooter className="w-full flex justify-between items-center">
+                                                <div className="flex flex-col items-start">
+                                                    <b className="truncate whitespace-nowrap overflow-hidden max-w-xs">{item.name}</b>
+                                                    <p className="text-default-500">{item.price}</p>
+                                                </div>
+
+
+                                            </CardFooter>
+                                        </Card>
+                                    </DropdownTrigger>
+                                    <DropdownMenu
+                                        aria-label="Action event example"
+                                        onAction={(key) => {
+                                            if (key == 'delete') {
+                                                let prs = localStorage.getItem('todos') || "[]"
+                                                let data = JSON.parse(prs)
+                                                prs = data.filter((product: any) => product.id !== item.id);
+
+                                                localStorage.setItem('todos', JSON.stringify(prs));
+                                                updateTovars();
+                                            }
+
+
+                                            if (key == 'edit') {
+                                                editable(item)
+                                                setPid(item.id)
+                                            }
+
+                                            if (key == 'dop') {
+                                                let tovars = JSON.parse(localStorage.getItem('tovars') || "[]")
+
+                                                let data = {
+                                                    id: item.id,
+                                                    name: item.name + ' dop',
+                                                    price: parseFloat(item.price),
+                                                    img: item.img
+                                                }
+
+
+                                                tovars = tovars.map((product: Tovars) => product.id === item.id ? data : product)
+                                                localStorage.setItem('todos', JSON.stringify(tovars))
+                                                updateTovars()
+                                            }
+                                        }
+                                        }
+                                    >
+                                        <DropdownItem key="edit">Изменить</DropdownItem>
+                                        <DropdownItem key="delete"  >
+                                            <p className="text-red-400">Удалить продукт</p>
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown> : null
+                        )
+                    })}
+                </div>
+
+
+               
+
+            </div>
+
+
+
+            <Modal placement="center" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Добавить товар с списокчек</ModalHeader>
+
+
+                            <ModalBody>
+
+                                <Input type="text"
+                                    value={pname}
+                                    onChange={(e) => {
+                                        setPname(e.target.value)
+                                    }}
+                                    label="Че как называется?" size="lg" />
+                                 <Input type="text"
+                                    value={price}
+                                    onChange={(e) => {
+                                        setPrice(e.target.value)
+                                    }}
+                                    label="Че во скок?" size="lg" />
+                               
+                            </ModalBody>
+
+
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Передумал
+                                </Button>
+                                <Button onClick={() => {
+                                    subitItem()
+                                }} color="primary" >
+                                    минус время
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+        </>
+    )
+}
+
+export default ShopTodo
+
+

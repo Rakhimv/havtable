@@ -6,6 +6,9 @@ import Settings from './components/Settings';
 import Change from './components/Change';
 import Shop from './components/Shop';
 import { useEffect } from 'react';
+import Todo from './components/Todo';
+import ShopTodo from './components/ShopTodo';
+import SettingsTodo from './components/SettingsTodo';
 // import Test from './components/Test';
 
 
@@ -41,6 +44,9 @@ function App() {
             <Route path='/settings' element={<Settings />} />
             <Route path='/change' element={<Change />} />
             <Route path='/shop' element={<Shop />} />
+            <Route path='/changeTodo' element={<SettingsTodo />} />
+            <Route path='/shopTodo' element={<ShopTodo />} />
+            <Route path='/todo' element={<Todo />} />
             {/* <Route path="/test" element={<Test />} /> */}
         </Routes >
     );
